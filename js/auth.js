@@ -15,7 +15,7 @@ function Auth (opts) {
   console.log(this.auth)
   this.opts = opts
   // console.log(this.opts)
-  let logout = document.querySelector(`#${this.opts.id}`).addEventListener('click', this._logout)
+  let logout = document.querySelector(`#${this.opts.id}`).addEventListener('click', this._logout.bind(this))
   if (this.opts.onAuthStateChanges !== undefined) {
     this._onAuthChange()
   }
