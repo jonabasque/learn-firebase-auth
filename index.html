@@ -1,62 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Firebase 3 Autenticación</title>
-  <link rel="stylesheet" href="estilo.css">
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <title>Firebase 3 Autenticación</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div id="message"></div>
+    <div class="container">
+      <header>
+        <h1>Firebase3: Authenticatión</h1>
+        <nav>
+          <a href="registro-usuarios.html">Registrarse</a> |
+          <a href="baja.html">Baja de usuario</a> |
+          <a href="#" id="loginanonimo">Login anónimo</a>
+        </nav>
+      </header>
+      <main>
+        <section class="login">
+          <h2>Login de usuarios</h3>
+          Email: <input id="input_email" type="email"/>
+          <br />
+          Password: <input id="input_pass" type="password"/>
+          <br />
+          <a href="recordar-clave.html" class="recordar">Recordar clave</a>
+          <br />
+          <button id="login" type="button">Login</button>
+          <button id="logout" type="button">Logout</button>
+          <div id="oauths">
+            <button id="oauth_google">Login con Google</button>
+            <button id="oauth_facebook">Login con Facebook</button>
+          </div>
+          <hr />
+        </section>
+        <section class="user">
+          <h2>Usuario autenticado</h2>
+          <p>
+            Nombre: <span id="user_name"></span>
+          </p>
+          <p>
+            Email: <span id="user_email"></span>
+          </p>
+        </section>
+      </main>
+      <footer>
+        <h3>Enlazar cuentas</h3>
+        <button>Enlazar cuenta Google</button>
+      </footer>
+    </div>
 
-</head>
-<body>
-  <div id="mensaje"></div>
-  <div class="container">
-    <header>
-      <h1>FIREBASE3 - AUTENTICACIÓN</h1>
-      <nav>
-        <a href="registro-usuarios.html">Registrarse</a> |
-        <a href="baja.html">Baja de usuario</a> |
-        <a href="#" id="loginanonimo">Login anónimo</a>
-      </nav>
-    </header>
-    <main>
-      <p class="titular">
-        <span id="preg">Login de usuarios</span>
-      </p>
-      <section class="encuesta interfazlogin" id="cuerpoencuesta">
-        Email: <input type="email"/>
-        <br />
-        Password: <input type="password"/>
-        <a href="recordar-clave.html" class="recordar">Recordar clave</a>
-        <button id="login" type="button">Login</button>
-        <button id="logout" type="button">Logout</button>
-        <div id="oauths">
-          <button id="oauth_google">Login con Google</button>
-          <button id="oauth_facebook">Login con Facebook</button>
-        </div>
-      </section>
-      <div id="user">
-        <h2>Usuario autenticado</h2>
-        <p>
-          Nombre: <span id="username"></span>
-        </p>
-        <p>
-          Email: <span id="useremail"></span>
-        </p>
-      </div>
-    </main>
-    <footer>
-      <h3>Enlazar cuentas</h3>
-      <button>Enlazar cuenta Google</button>
-    </footer>
-  </div>
 
-
-  <script src="../node_modules/firebase/firebase.js"></script>
-  <script src="js/firebase.js"></script>
-  <script src="js/database.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/gestion-oauth.js"></script>
-  <script src="js/gestion-password.js"></script>
-  <script src="js/gestion-anonimo.js"></script>
-  <script src="js/link-accounts.js"></script>
-</body>
+    <script src="../node_modules/firebase/firebase.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/oauth-providers.js"></script>
+  </body>
 </html>
