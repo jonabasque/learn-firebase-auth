@@ -12,20 +12,24 @@
 function Auth (opts) {
   // Accedo al servicio de autenticación & BBDD
   this.auth = firebase.auth()
+  console.log(this.auth)
   this.opts = opts
-  let logout = document.querySelector(this.opts.id).addEventListener('click', this._logout)
+  // console.log(this.opts)
+  let logout = document.querySelector(`#${this.opts.id}`).addEventListener('click', this._logout)
   if (this.opts.onAuthStateChanges !== undefined) {
     this._onAuthChange()
   }
 }
 
 Auth.prototype._logout = function () {
+  console.log(this.auth)
   this.auth.signOut()
     .then(this.opts.logout)
 }
 
 Auth.prototype._onAuthChange = function () {
   this.auth.onAuthStateChanged((user) => {
+    console.log('onAuthStateChanged', user)
     if (user) {
       // getId('logouticon').style.display = 'block';
       this.opts.onAuthStateChanges.user(this._getAuthProfile);
@@ -43,7 +47,7 @@ Auth.prototype._onAuthChange = function () {
 
 Auth.prototype._getAuthProfile = function () {
   const user = this.auth.currentUser;
-  console.log(user);
+  console.log('currentUser: ', user);
   if(user.providerData[0]){
     return {
       name: user.displayName || user.providerData[0].displayName || 'Nombre desconocido',
