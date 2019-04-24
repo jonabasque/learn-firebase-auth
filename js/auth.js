@@ -2,8 +2,10 @@
  * Auth Prototype for firebase Auth service
  *
  * @param {Object} opts
- * * @opts.id (required)
- * * @opts.logout (required)
+ * * @opts.elems (required)
+ * * @opts.elemes.name (required)
+ * * @opts.elemes.email (required)
+ * * @opts.elemes.logout (required)
  * * @opts.onAuthStateChanges [optional]
  * * @opts.onAuthStateChanges.user (required)
  * * @opts.onAuthStateChanges.anon (required)
@@ -12,19 +14,25 @@
 function Auth (opts) {
   // Accedo al servicio de autenticación & BBDD
   this.auth = firebase.auth()
-  console.log(this.auth)
+  // console.log(this.auth)
   this.opts = opts
-  // console.log(this.opts)
-  let logout = document.querySelector(`#${this.opts.id}`).addEventListener('click', this._logout.bind(this))
-  if (this.opts.onAuthStateChanges !== undefined) {
-    this._onAuthChange()
-  }
+  console.log(this.opts)
+  this.elems = JSON.parse(JSON.stringify(this.opts.elems))
+  // TODO: inner method for buble & clean constructor
+  this.elems.user.name = document.querySelector(`#${this.opts.elems.user.name}`)
+  this.elems.user.email = document.querySelector(`#${this.opts.elems.user.email}`)
+  this.elems.actions.logout = document.querySelector(`#${this.opts.elems.actions.logout}`)
+  this.elems.actions.logout.addEventListener('click', this._logout.bind(this))
+  this._onAuthChange()
 }
 
+// Ejecuta la accion de desautenticación del usuario autenticado (sea anónimo o no)
 Auth.prototype._logout = function () {
-  console.log(this.auth)
+  // console.log(this.auth)
   this.auth.signOut()
-    .then(this.opts.logout)
+    .then(() => {
+      this._renderAuthProfile()
+    })
 }
 
 Auth.prototype._onAuthChange = function () {
@@ -32,7 +40,8 @@ Auth.prototype._onAuthChange = function () {
     console.log('onAuthStateChanged', user)
     if (user) {
       // getId('logouticon').style.display = 'block';
-      this.opts.onAuthStateChanges.user(this._getAuthProfile);
+      this._renderAuthProfile(this._getAuthProfile)
+      console.log('render: ', user)
     } else {
       // getId('logouticon').style.display = 'none';
       const userAnon = {
@@ -40,7 +49,8 @@ Auth.prototype._onAuthChange = function () {
         email: 'anon@example.com',
         photoUrl: 'http://www.midominio.com/imagen-avatar-default.png'
       }
-      this.opts.onAuthStateChanges.anon(userAnon);
+      this._renderAuthProfile(userAnon)
+      console.log('render: ', userAnon)
     }
   })
 }
@@ -54,5 +64,18 @@ Auth.prototype._getAuthProfile = function () {
       email: user.email || user.providerData[0].email || 'no-email@example.com',
       photoUrl: user.photoURL || user.providerData[0].photoURL || 'http://www.midominio.com/imagen-avatar-default.png'
     }
+  }
+}
+
+Auth.prototype._renderAuthProfile = function (user) {
+  if (!user) {
+    // console.log(this.elems, user)
+    for (const elem of Object.values(this.elems.user)) {
+      elem.innerHTML = ''
+    }
+  } else {
+    // console.log(this.elems, user)
+    this.elems.user.name.innerHTML = user.name
+    this.elems.user.email.innerHTML = user.email
   }
 }
