@@ -17,14 +17,36 @@ function Auth (opts) {
   this.render = new Render(opts.elems)
   // Accedo al servicio de autenticación & BBDD
   this.auth = firebase.auth()
-  // console.log(this.auth)
+  this.providers = new AuthProvider(opts.elems.providers)
+  console.log(this.providers)
+  // logout listener
   this.render.elems.actions.logout.addEventListener('click', this._logout.bind(this))
+  // login listeners
+  // TODO: Create provider listeners dinamically
+  this.render.elems.google.addEventListener('click', () => {
+    this.providers.auth.google.addScope('https://www.googleapis.com/auth/userinfo.email')
+    this._login('google')
+  })
+
   // TODO: No endría por que autenticar un usuario anónimo nada mas entrar en la página.
   // O si, y luego eliminar el anónimo y guardar el perfil usado y al usuario existente o a uno nuevo.
   this._onAuthChange()
 }
 
-// Ejecuta la accion de desautenticación del usuario autenticado (sea anónimo o no)
+// Ejecuta la acción de authenticación con el método elegido (Provider, Email/Pass o Anónimo)
+Auth.prototype._login = function (type) {
+  console.log(this.providers.auth[type])
+  this.auth.signInWithPopup(this.providers.auth[type])
+    .then(function(res) {
+      console.log('login con oauth', res)
+      // voy a guardar el perfil del usuario
+    })
+    .catch(function(err) {
+      console.error('Error de autenticación: ', err.message);
+    })
+}
+
+// Ejecuta la accion de desautenticación del usuario autenticado (sea Provider, Email/pass o Anónimo)
 Auth.prototype._logout = function () {
   // console.log(this.auth)
   this.auth.signOut()
@@ -38,8 +60,8 @@ Auth.prototype._onAuthChange = function () {
     console.log('onAuthStateChanged', user)
     if (user) {
       // getId('logouticon').style.display = 'block';
-      this.render.user(this._getAuthProfile)
-      console.log('render: ', user)
+      this.render.user(this._getAuthProfile())
+      // console.log('render: ', user)
     } else {
       // getId('logouticon').style.display = 'none';
       const userAnon = {
@@ -48,7 +70,7 @@ Auth.prototype._onAuthChange = function () {
         photoUrl: 'http://www.midominio.com/imagen-avatar-default.png'
       }
       this.render.user(userAnon)
-      console.log('render: ', userAnon)
+      // console.log('render: ', userAnon)
     }
   })
 }
