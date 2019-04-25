@@ -3,26 +3,24 @@
  *
  * @param {Object} opts
  * * @opts.elems (required)
- * * @opts.elemes.name (required)
- * * @opts.elemes.email (required)
- * * @opts.elemes.logout (required)
+ * * @opts.elems.name (required)
+ * * @opts.elems.email (required)
+ * * @opts.elems.logout (required)
  * * @opts.onAuthStateChanges [optional]
  * * @opts.onAuthStateChanges.user (required)
  * * @opts.onAuthStateChanges.anon (required)
  * @return {undefined}
  */
 function Auth (opts) {
+  this.opts = opts
+  // console.log(this.opts)
+  this.render = new Render(opts.elems)
   // Accedo al servicio de autenticación & BBDD
   this.auth = firebase.auth()
   // console.log(this.auth)
-  this.opts = opts
-  console.log(this.opts)
-  this.elems = JSON.parse(JSON.stringify(this.opts.elems))
-  // TODO: inner method for buble & clean constructor
-  this.elems.user.name = document.querySelector(`#${this.opts.elems.user.name}`)
-  this.elems.user.email = document.querySelector(`#${this.opts.elems.user.email}`)
-  this.elems.actions.logout = document.querySelector(`#${this.opts.elems.actions.logout}`)
-  this.elems.actions.logout.addEventListener('click', this._logout.bind(this))
+  this.render.elems.actions.logout.addEventListener('click', this._logout.bind(this))
+  // TODO: No endría por que autenticar un usuario anónimo nada mas entrar en la página.
+  // O si, y luego eliminar el anónimo y guardar el perfil usado y al usuario existente o a uno nuevo.
   this._onAuthChange()
 }
 
@@ -31,7 +29,7 @@ Auth.prototype._logout = function () {
   // console.log(this.auth)
   this.auth.signOut()
     .then(() => {
-      this._renderAuthProfile()
+      this.render.user()
     })
 }
 
@@ -40,7 +38,7 @@ Auth.prototype._onAuthChange = function () {
     console.log('onAuthStateChanged', user)
     if (user) {
       // getId('logouticon').style.display = 'block';
-      this._renderAuthProfile(this._getAuthProfile)
+      this.render.user(this._getAuthProfile)
       console.log('render: ', user)
     } else {
       // getId('logouticon').style.display = 'none';
@@ -49,7 +47,7 @@ Auth.prototype._onAuthChange = function () {
         email: 'anon@example.com',
         photoUrl: 'http://www.midominio.com/imagen-avatar-default.png'
       }
-      this._renderAuthProfile(userAnon)
+      this.render.user(userAnon)
       console.log('render: ', userAnon)
     }
   })
@@ -64,18 +62,5 @@ Auth.prototype._getAuthProfile = function () {
       email: user.email || user.providerData[0].email || 'no-email@example.com',
       photoUrl: user.photoURL || user.providerData[0].photoURL || 'http://www.midominio.com/imagen-avatar-default.png'
     }
-  }
-}
-
-Auth.prototype._renderAuthProfile = function (user) {
-  if (!user) {
-    // console.log(this.elems, user)
-    for (const elem of Object.values(this.elems.user)) {
-      elem.innerHTML = ''
-    }
-  } else {
-    // console.log(this.elems, user)
-    this.elems.user.name.innerHTML = user.name
-    this.elems.user.email.innerHTML = user.email
   }
 }
